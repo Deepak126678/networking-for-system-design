@@ -41,7 +41,7 @@ def handle_client(conn, addr):
         with clients_lock:
             clients[conn] = username
 
-        print(f"[{timestamp()}] ✅ {username} joined from {addr}")
+        print(f"[{timestamp()}] {username} joined from {addr}")
         broadcast(f"[{timestamp()}] 🟢 {username} joined the chat!\n", exclude_conn=conn)
         conn.send(f"Welcome {username}! You're connected. Type 'quit' to leave.\n".encode())
 

@@ -18,7 +18,7 @@ print(f"[TCP SERVER] Listening on {HOST}:{PORT}")
 print("[TCP SERVER] Waiting for client... (3-way handshake will happen on connect)")
 
 conn, addr = server.accept()  # <-- SYN received, SYN-ACK sent, ACK received here
-print(f"[TCP SERVER] ✅ Connected by {addr} — 3-way handshake complete!")
+print(f"[TCP SERVER] Connected by {addr} — 3-way handshake complete!")
 
 while True:
     data = conn.recv(1024)

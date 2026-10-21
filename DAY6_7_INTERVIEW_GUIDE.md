@@ -131,7 +131,7 @@ Imagine a bucket that holds up to **10 tokens**:
 Refill: 2 tokens / sec  ───► [ 🪙 🪙 🪙 🪙 ] (Capacity: 10)
                                       │
 Incoming Request ─────────────────────┴──► Needs 1 token?
-                                            ├── Available? ✅ Allow!
+                                            ├── Available? Allow!
                                             └── Empty?     ❌ HTTP 429!
 ```
 
@@ -218,14 +218,14 @@ flowchart LR
     subgraph Status_302 ["HTTP 302 Found (Temporary Redirect)"]
         B2["Browser"] -->|"Every single time"| S2["TinyURL Server"]
         S2 -->|"302 Redirect"| B2
-        Note2["Browser NEVER caches.\nEvery click hits server.\n✅ Perfect for Analytics, Monetization, & Tracking!"]
+        Note2["Browser NEVER caches.\nEvery click hits server.\nPerfect for Analytics, Monetization, & Tracking!"]
     end
 ```
 
 | Status Code | Caching Behavior | Server Load | Click Analytics Tracking |
 |---|---|---|---|
 | **301 Moved Permanently** | Browser caches forever | **Lowest** (Browser skips server) | ❌ **Broken** (Server cannot count clicks) |
-| **302 Found / 307 Temp** | Browser does not cache | Higher (Every click hits server) | ✅ **Accurate** (Tracks location, referrer, and user stats) |
+| **302 Found / 307 Temp** | Browser does not cache | Higher (Every click hits server) | **Accurate** (Tracks location, referrer, and user stats) |
 
 > 🏆 **The Winning Interview Answer:**  
 > *"If our primary business goal is tracking click metrics, referral sources, and user analytics, we must use **HTTP 302 Found**. If our goal is minimal server cost and maximum redirect speed where analytics do not matter, we use **HTTP 301 Moved Permanently**."*

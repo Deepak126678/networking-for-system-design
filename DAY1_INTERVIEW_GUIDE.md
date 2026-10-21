@@ -64,15 +64,15 @@ You can split this across two sessions.
 
 | Topic | Status | Notes |
 |---|---|---|
-| Networks and client–server model | ✅ Today | Foundation for everything |
-| Packets and data travel | ✅ Today | Beginner level |
-| IP addresses, public vs private, ports | ✅ Today | Must know |
-| DNS resolution chain | ✅ Today | Frequently asked |
-| TCP vs UDP | ✅ Today | Frequently asked |
-| HTTP request/response structure | ✅ Today | Must know |
-| HTTPS and TLS purpose | ✅ Today | Purpose only, not internals |
-| Latency, bandwidth, throughput | ✅ Today | System design foundation |
-| End-to-end URL walkthrough | ✅ Today | Top interview question |
+| Networks and client–server model | Today | Foundation for everything |
+| Packets and data travel | Today | Beginner level |
+| IP addresses, public vs private, ports | Today | Must know |
+| DNS resolution chain | Today | Frequently asked |
+| TCP vs UDP | Today | Frequently asked |
+| HTTP request/response structure | Today | Must know |
+| HTTPS and TLS purpose | Today | Purpose only, not internals |
+| Latency, bandwidth, throughput | Today | System design foundation |
+| End-to-end URL walkthrough | Today | Top interview question |
 | TLS certificate internals | 🔜 Later | Too deep for Day 1 |
 | Subnetting and CIDR notation | 🔜 Later | Ops/DevOps territory |
 | Routing protocols (BGP, OSPF) | 🔜 Later | Infrastructure engineering |
@@ -614,7 +614,7 @@ Content-Length: 1240
 
 **Idempotent** means calling the same request multiple times produces the same result as calling it once.
 
-- `DELETE /users/5` ten times = user 5 is deleted (same outcome each time) ✅
+- `DELETE /users/5` ten times = user 5 is deleted (same outcome each time)
 - `POST /orders` ten times = ten orders created ❌ (not idempotent)
 
 This matters when building retry logic: you can safely retry idempotent requests. You should not blindly retry `POST` without checking whether the first request succeeded.

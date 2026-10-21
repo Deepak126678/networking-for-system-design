@@ -212,8 +212,8 @@ Server-Side Discovery (AWS ALB / Kubernetes kube-proxy):
 
 | Type | How It Works | Tech Stack | Pros & Cons |
 |---|---|---|---|
-| **Server-Side Discovery** (Standard) | The caller hits a stable DNS name or VIP (Virtual IP). A load balancer queries the registry and routes traffic. | Kubernetes Services (`ClusterIP`), AWS ALB, GCP Internal LB | ✅ Simple for developers; no custom client logic.<br>❌ Extra network hop through the proxy. |
-| **Client-Side Discovery** | The client queries the registry (Consul, Eureka) to get a list of active IPs, selects one (client-side load balancing), and connects directly. | Netflix Eureka, HashiCorp Consul, gRPC with Envoy | ✅ No intermediary bottleneck; lowest latency.<br>❌ Requires fat client SDK in every programming language. |
+| **Server-Side Discovery** (Standard) | The caller hits a stable DNS name or VIP (Virtual IP). A load balancer queries the registry and routes traffic. | Kubernetes Services (`ClusterIP`), AWS ALB, GCP Internal LB | Simple for developers; no custom client logic.<br>❌ Extra network hop through the proxy. |
+| **Client-Side Discovery** | The client queries the registry (Consul, Eureka) to get a list of active IPs, selects one (client-side load balancing), and connects directly. | Netflix Eureka, HashiCorp Consul, gRPC with Envoy | No intermediary bottleneck; lowest latency.<br>❌ Requires fat client SDK in every programming language. |
 
 ### D. System Design Connection: Kubernetes Networking Reality Check
 In modern cloud architectures (AWS EKS / GKE):
@@ -598,7 +598,7 @@ simulate_jitter()
 | **Data Inspected** | Source/Dest IP & Ports | Full HTTP Request (Headers, Cookies, Body) |
 | **TLS Handling** | Passes encrypted bytes | Terminates and decrypts TLS |
 | **Throughput & Speed** | Extremely fast, lower CPU | Lower throughput per core, higher CPU |
-| **Smart Routing** | ❌ None | ✅ Path (`/orders`), Headers, Cookies |
+| **Smart Routing** | ❌ None | Path (`/orders`), Headers, Cookies |
 | **Example Tech** | AWS NLB, HAProxy TCP mode | AWS ALB, Nginx, Envoy |
 
 ---

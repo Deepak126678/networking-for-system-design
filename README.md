@@ -188,7 +188,7 @@ Step 3: hosts file           → C:\Windows\System32\drivers\etc\hosts
 Step 4: Router / ISP DNS     → Your local DNS resolver
 Step 5: Root Name Server     → 13 root servers worldwide
 Step 6: .com TLD Server      → Knows who handles google.com
-Step 7: Google's Auth DNS    → "google.com = 172.217.26.110" ✅
+Step 7: Google's Auth DNS    → "google.com = 172.217.26.110"
 ```
 
 #### DNS Record Types (Must Know!)

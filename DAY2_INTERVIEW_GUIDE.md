@@ -58,13 +58,13 @@ By the end of Day 2 you will be able to:
 
 | Topic | Status | Notes |
 |---|---|---|
-| HTTP/2 vs HTTP/1.1 (multiplexing, compression) | ✅ Today | Frequently asked at 20+ LPA level |
-| WebSockets — what, why, when | ✅ Today | Real-time systems question |
-| REST API design principles | ✅ Today | You write APIs every day |
-| CORS — what it is and how to fix it | ✅ Today | Every frontend-backend team hits this |
-| JWT vs Session authentication | ✅ Today | Asked in almost every interview |
-| HTTP caching and Cache-Control | ✅ Today | System design and performance |
-| Service-to-service communication | ✅ Today | Microservices foundation |
+| HTTP/2 vs HTTP/1.1 (multiplexing, compression) | Today | Frequently asked at 20+ LPA level |
+| WebSockets — what, why, when | Today | Real-time systems question |
+| REST API design principles | Today | You write APIs every day |
+| CORS — what it is and how to fix it | Today | Every frontend-backend team hits this |
+| JWT vs Session authentication | Today | Asked in almost every interview |
+| HTTP caching and Cache-Control | Today | System design and performance |
+| Service-to-service communication | Today | Microservices foundation |
 | HTTP/3 and QUIC | 🔜 Later | Built on UDP, worth learning after HTTP/2 |
 | OAuth 2.0 and OpenID Connect internals | 🔜 Later | Deep auth — Day 4 or 5 |
 | GraphQL vs REST internals | 🔜 Later | Separate session |
@@ -371,18 +371,18 @@ The HTTP method tells you **what** is happening. The URL tells you **what resour
 **1. Resources are nouns, not verbs**
 
 ```
-✅ GET /orders          (noun — the resource)
+GET /orders          (noun — the resource)
 ❌ GET /getOrders       (verb in URL — not RESTful)
 
-✅ POST /products       (create a product)
+POST /products       (create a product)
 ❌ POST /createProduct  (redundant verb)
 ```
 
 **2. Use plural nouns for collections**
 
 ```
-✅ /users       (collection)
-✅ /users/42    (one item in the collection)
+/users       (collection)
+/users/42    (one item in the collection)
 ❌ /user        (singular — inconsistent)
 ```
 

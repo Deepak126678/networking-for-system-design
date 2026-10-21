@@ -145,7 +145,7 @@ scores = []
 for i, item in enumerate(qa):
     print(f"  {item['q']}")
     wait()
-    print(f"\n  ✅ MODEL ANSWER:")
+    print(f"\n  MODEL ANSWER:")
     for line in item['a'].split('\n'):
         print(f"  {line}")
     score = input("\n  Your score (0=missed, 1=partial, 2=nailed it): ")
@@ -182,7 +182,7 @@ print("  Start coding now... Press Enter when done.\n")
 input("  [Press Enter when you're done coding to see the solution...]\n")
 
 print("""
-  ✅ SOLUTION:
+  SOLUTION:
 
   import socket
   
@@ -228,7 +228,7 @@ print("""
 wait()
 
 print("""
-  ✅ MODEL ARCHITECTURE:
+  MODEL ARCHITECTURE:
 
   User Browser
       │

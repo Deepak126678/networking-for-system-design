@@ -12,7 +12,7 @@ client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # TCP
 
 print(f"[TCP CLIENT] Connecting to {HOST}:{PORT}...")
 client.connect((HOST, PORT))  # <-- 3-way handshake happens here!
-print(f"[TCP CLIENT] ✅ Connected! (SYN → SYN-ACK → ACK done)")
+print(f"[TCP CLIENT] Connected! (SYN → SYN-ACK → ACK done)")
 
 messages = ["hello", "networking is fun", "tcp guarantees delivery"]
 

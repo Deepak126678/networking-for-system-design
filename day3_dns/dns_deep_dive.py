@@ -97,4 +97,4 @@ print(f"  {'-'*80}")
 for rtype, purpose, example in records:
     print(f"  {rtype:<8} {purpose:<42} {example}")
 
-print("\n✅ Day 3 complete! Also run 'nslookup -type=MX gmail.com' in terminal!\n")
+print("\nDay 3 complete! Also run 'nslookup -type=MX gmail.com' in terminal!\n")

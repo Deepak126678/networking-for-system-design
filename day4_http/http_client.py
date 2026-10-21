@@ -88,4 +88,4 @@ for code, meaning in body['status_codes'].items():
     if len(code) == 3:
         print(f"    {code} → {meaning}")
 
-print("\n✅ Day 4 complete! You just built and tested a REST API from scratch!\n")
+print("\nDay 4 complete! You just built and tested a REST API from scratch!\n")

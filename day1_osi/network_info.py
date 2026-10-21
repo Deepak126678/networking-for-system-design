@@ -66,4 +66,4 @@ tcpip = [
 for layer, protocols in tcpip:
     print(f"  {layer:<18} → {protocols}")
 
-print("\n✅ Day 1 complete! Run 'tracert google.com' in terminal to see live hops.\n")
+print("\nDay 1 complete! Run 'tracert google.com' in terminal to see live hops.\n")

@@ -33,7 +33,7 @@ def main():
         print("   Make sure chat_server.py is running first!")
         sys.exit(1)
 
-    print(f"✅ Connected to chat server at {HOST}:{PORT}")
+    print(f"Connected to chat server at {HOST}:{PORT}")
     print(f"   Your socket: {client.getsockname()} → {client.getpeername()}")
     print(f"   (socket = IP + Port, this is YOUR unique connection)\n")
 
