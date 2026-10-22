@@ -523,4 +523,4 @@ User → CDN (static files: images, CSS, JS)
 
 ---
 
-*Prepared during Networking Week — Daily Standup Interview Prep 🚀*
+*Computer Networks & Distributed Systems Handbook 🚀*

@@ -1,6 +1,6 @@
 # Day 4 & 5 Combined Guide: Network Security, CDN, Sockets & Production Debugging
 
-**For:** Backend developers with ~2 years experience preparing for ₹20+ LPA interviews.  
+**For:** Backend Engineers & SDEs preparing for Core Infrastructure & Networking interviews.  
 **Style:** Plain English, no textbook jargon, with visual diagrams for every concept.
 
 ---

@@ -1,6 +1,6 @@
 # Day 6 & 7 Combined Guide: Advanced System Design, Real-Time Protocols & Mock Interview Mastery
 
-**For:** Backend developers with ~2 years experience preparing for ₹20+ LPA roles.  
+**For:** Backend Engineers & SDEs preparing for Advanced System Design interviews.  
 **Style:** Plain English, zero academic jargon, visual diagrams, and practical system design scenarios.
 
 ---
@@ -18,7 +18,7 @@ This guide covers the remaining **Day 6 & Day 7** topics to complete your 7-day 
    - Live Chat / WhatsApp: Scaling 1,000,000 WebSockets horizontally using Redis Pub/Sub.
    - Flash Sale / Ticket Booking: Preventing network overload during high-concurrency spikes.
 6. **"Latency Numbers Every Programmer Must Know"** — Practical rules of thumb.
-7. **The ₹20+ LPA Mock Interview Final Drill** — 15 trick questions that separate junior from senior developers.
+7. **The Technical Mock Interview Final Drill** — 15 trick questions that separate junior from senior developers.
 
 ---
 
@@ -307,7 +307,7 @@ When designing systems, keep these practical rules of thumb in mind:
 
 ---
 
-## 7. The Final ₹20+ LPA Mock Interview Drill: 15 Rapid-Fire Questions
+## 7. The Final Mock Interview Drill: 15 Rapid-Fire Questions
 
 #### Q1: Why does HTTP/3 use UDP instead of TCP?
 > "HTTP/3 uses UDP via QUIC to eliminate transport-layer head-of-line blocking. In HTTP/2 over TCP, a single lost packet freezes all multiplexed streams until retransmitted. In HTTP/3, streams are completely independent, so packet loss on one stream does not impact others. It also provides 0-RTT connection resumption and connection migration for mobile devices."

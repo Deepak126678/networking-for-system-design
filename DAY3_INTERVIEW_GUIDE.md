@@ -1,6 +1,6 @@
 # Day 3 Networking — System Design & Backend Infrastructure Guide
 
-**For:** Software developers with ~2 years of experience targeting **₹20+ LPA roles in India**.  
+**For:** Software Development Engineers (SDE / Backend) targeting System Design & Architecture rounds.  
 **Prerequisites:** Completed [Day 1](./DAY1_INTERVIEW_GUIDE.md) and [Day 2](./DAY2_INTERVIEW_GUIDE.md).
 
 > 🎯 **Day 3 Theme:** Moving from single-server networking to **distributed systems and production infrastructure**. The topics covered today form the backbone of Low-Level Design (LLD) and High-Level System Design (HLD) interview rounds.
@@ -23,7 +23,7 @@ By the end of Day 3, you will be able to:
 
 ## Scope & System Design Relevance Matrix
 
-| Topic | System Design Relevance | Why Interviewers Ask It (20+ LPA Context) |
+| Topic | System Design Relevance | Why Interviewers Ask It (System Design Context) |
 |---|---|---|
 | **Reverse Proxy & TLS Termination** | 🔥 **High** | Edge routing, security perimeter, offloading CPU-intensive crypto from app servers |
 | **L4 vs. L7 Load Balancing** | 🔥🔥 **Critical** | Core component of any high-scale HLD (handling 100k+ RPS, sticky sessions, protocol routing) |

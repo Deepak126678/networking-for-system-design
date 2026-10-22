@@ -1,6 +1,6 @@
 # Computer Networks SDE Roadmap & Top 20 Interview Masterclass
 
-**Target Audience:** SDE-1 / SDE-2 candidates preparing for **₹20+ LPA roles** in India.  
+**Target Audience:** Software Engineers and Backend Developers preparing for SDE-1 / SDE-2 technical interviews.  
 **Philosophy:** No dry textbook definitions. Every concept is explained in plain conversational English with real-life analogies, visual flowcharts, and direct connections to **System Design and Backend Production Engineering**.
 
 ---
@@ -18,7 +18,7 @@ This maps directly to the official SDE curriculum:
 
 ---
 
-## 🎯 Part 2: Top 20 Most Asked Networking Questions (₹20+ LPA Interview Q&A)
+## 🎯 Part 2: Top 20 Most Asked Networking Technical Interview Questions
 
 Jump directly to the [Top 20 Most Asked Questions](#top-20-most-asked-networking-interview-questions).
 

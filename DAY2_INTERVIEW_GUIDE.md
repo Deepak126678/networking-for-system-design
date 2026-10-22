@@ -1,6 +1,6 @@
 # Day 2 Networking — Interview Preparation Guide
 
-**For:** Software developers with ~2 years of experience preparing for ₹20+ LPA roles in India.
+**For:** Software Development Engineers (SDE / Backend) preparing for technical interviews.
 **Prerequisite:** Complete [Day 1](./DAY1_INTERVIEW_GUIDE.md) first — this guide builds directly on it.
 
 ---
@@ -58,7 +58,7 @@ By the end of Day 2 you will be able to:
 
 | Topic | Status | Notes |
 |---|---|---|
-| HTTP/2 vs HTTP/1.1 (multiplexing, compression) | Today | Frequently asked at 20+ LPA level |
+| HTTP/2 vs HTTP/1.1 (multiplexing, compression) | Today | Frequently asked in SDE interviews |
 | WebSockets — what, why, when | Today | Real-time systems question |
 | REST API design principles | Today | You write APIs every day |
 | CORS — what it is and how to fix it | Today | Every frontend-backend team hits this |

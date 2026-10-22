@@ -1,6 +1,6 @@
 # Day 1 Networking — Interview Preparation Guide
 
-**For:** Software developers with ~2 years of experience preparing for ₹20+ LPA roles in India.
+**For:** Software Development Engineers (SDE / Backend) preparing for technical interviews.
 
 ---
 
