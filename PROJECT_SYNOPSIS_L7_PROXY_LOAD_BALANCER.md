@@ -1,106 +1,116 @@
 # Project Synopsis & Architecture Specification
 
 ## Project Title
-**Production-Grade Distributed Microservices Infrastructure: High-Performance Nginx L7 Reverse Proxy, Load Balancer & Redis Cache**
+**Production-Grade Distributed Booking Platform: High-Availability Microservices, Nginx L7 Traffic Management, PostgreSQL Concurrency Locking, Redis Caching & Automated Canary Rollbacks**
 
-**Document Version:** 2.0.0  
-**Target Roles:** Software Development Engineer (SDE / SDE-2) / Backend Engineer  
-**Architecture Focus:** Production Networking & Microservices System Design  
+**Document Version:** 4.0.0  
+**Target Roles:** Software Development Engineer (SDE / SDE-2) / Backend Systems Engineer  
+**Architecture Focus:** Distributed Transactions, Concurrency Control, Edge Networking & Progressive Delivery  
 
 ---
 
 ## 1. Executive Summary
 
-In high-scale enterprise architectures (such as Swiggy, Zomato, Netflix, and Amazon), client requests never hit backend application runtimes directly. Instead, battle-tested edge proxies like **Nginx** intercept, secure, cache, and distribute traffic across a fleet of microservices.
+In modern enterprise architectures (e.g., Swiggy, Zomato, BookMyShow, Amazon), backend systems must balance two critical requirements:
+1. **Application & Data Integrity:** Ensuring that concurrent operations (such as multiple users attempting to reserve the last inventory item) execute without double-booking anomalies or race conditions.
+2. **Resilient Edge Traffic Management:** Ensuring that traffic enters through an optimized, secure gateway (Nginx) that terminates TLS, reuses upstream TCP connections, handles rate limiting, and supports progressive canary releases with automated rollback.
 
-This project delivers hands-on industry exposure by architecting, deploying, and benchmarking a complete production networking layer:
-- **Nginx** as a Layer 7 Reverse Proxy and Load Balancer managing traffic distribution.
-- **Multiple Backend Microservices** handling business operations (Catalog & Order services).
-- **Redis** as a high-speed distributed cache and rate limiter.
-- **Docker & Docker Compose** orchestrating the isolated multi-container network.
+This project unifies both domains into an end-to-end, production-grade distributed architecture. It pairs an open-source, transactional **Booking/Reservation Service** backed by **PostgreSQL** with an **Nginx Layer 7 Edge Reverse Proxy**, **Redis Distributed Caching**, and a **Canary Rollout Controller**.
 
 ---
 
 ## 2. System Resource Allocation & Hardware Footprint
 
-The architecture is designed to run efficiently with lightweight memory utilization and low system overhead:
+The entire multi-container mesh runs locally with minimal resource overhead:
 
 | Component | Memory Allocation (RAM) | Architectural Characteristics |
 |---|---|---|
-| **Nginx** | **~10 MB RAM** | C-based asynchronous event-driven I/O model (`epoll`) with minimal overhead. |
-| **Redis** | **~15 MB RAM** | High-throughput in-memory data store for caching and distributed rate-limiting counters. |
-| **Backend Services** | **~50–100 MB RAM** | Stateless, lightweight microservice runtimes with bounded resource limits. |
-| **Docker Engine** | Standard Container Overhead | Containerized network virtualization over isolated bridge subnets. |
+| **Nginx (Edge Proxy & LB)** | **~10 MB RAM** | C-based event-driven I/O (`epoll`); handles TLS termination and connection pooling. |
+| **PostgreSQL Database** | **~35 MB RAM** | ACID-compliant relational storage with row-level lock management. |
+| **Redis Cache & Lock Store**| **~15 MB RAM** | In-memory key-value engine for query caching, rate limiting, and idempotency. |
+| **Booking API (v1 - Stable)**| **~50 MB RAM** | Primary transactional service instance executing booking business logic. |
+| **Booking API (v2 - Canary)**| **~50 MB RAM** | Canary release instance running simulated performance degradation. |
+| **Rollout Controller Daemon**| **~10 MB RAM** | Lightweight health-monitoring script reconciling traffic weights. |
 
-**Total Runtime Footprint:** **< 200 MB RAM** across the entire multi-service mesh.
+**Total Runtime Footprint:** **< 200 MB RAM** (Runs smoothly on any standard developer laptop).
 
 ---
 
-## 3. Real-World Architectural Blueprint
+## 3. High-Level Architecture Blueprint
 
 ```mermaid
 flowchart TD
-    Client["Client (Browser / Postman / cURL)"] -->|"HTTP/HTTPS on Port 80 / 443"| Nginx["1. Nginx L7 Reverse Proxy & Load Balancer\n- TLS Termination & SSL Offloading\n- Rate Limiting (limit_req zone)\n- Path-Based Routing\n- Upstream Round-Robin Balancing\n- In-Memory Response Caching"]
+    Client["Client (Browser / Postman / cURL)"] -->|"HTTPS (Port 443)\nTLS 1.3 + HTTP/2"| Nginx["1. Nginx L7 Reverse Proxy & Traffic Splitter\n- TLS 1.3 Termination (Self-Signed Cert)\n- HTTP -> HTTPS 301 Redirect\n- Rate Limiting (limit_req zone)\n- Upstream Keepalive Connection Pool (keepalive 32)\n- Weighted Canary Traffic Split (90/10)"]
 
-    subgraph Internal_Private_Network ["Docker Internal Network (Private Subnet 172.20.0.0/16)"]
-        Nginx -->|"Path: /api/v1/catalog"| CatalogCluster["Catalog Service Cluster\n- Node A (:5001)\n- Node B (:5002)\n(Load Balanced via Round-Robin)"]
+    subgraph Docker_Bridge_Network ["Isolated Docker Bridge Network (172.20.0.0/16)"]
+        Nginx -->|"90% Traffic (Weight: 9)"| AppV1["2. Booking Service (v1 - Stable)\n- Port 5001\n- Normal Transaction Execution"]
+        Nginx -->|"10% Traffic (Weight: 1)"| AppV2["3. Booking Service (v2 - Canary)\n- Port 5002\n- Injected Latency / Error Rate"]
+
+        AppV1 & AppV2 <-->|"Cache-Aside Pattern (TTL: 60s)\nIdempotency Keys (SETNX)"| Redis[("4. Redis Distributed Cache (:6379)\n- Room Search Cache\n- Idempotency Locks")]
         
-        Nginx -->|"Path: /api/v1/orders"| OrderService["Order Service (:6001)"]
-        
-        CatalogCluster <-->|"Query & Cache Results (Sub-millisecond)"| Redis[("Redis Distributed Cache (:6379)\n- Query Result Caching\n- Distributed Rate Limit Counters")]
-        OrderService <-->|"Idempotency & Session Lock"| Redis
+        AppV1 & AppV2 <-->|"ACID Transactions\nSELECT ... FOR UPDATE"| Postgres[("5. PostgreSQL Database (:5432)\n- Rooms & Inventory Tables\n- Bookings Table\n- Row-Level Locking")]
+
+        Controller["6. Canary Rollout Controller\n- Probes v2 Error Rate & Latency\n- Auto-Rollback: Sets v2 Weight to 0%"] -.->|"Rewrites Upstream & Reloads"| Nginx
     end
 ```
 
 ---
 
-## 4. Core Features & Architecture Specifications
+## 4. Core Functional Modules
 
-### 1. Nginx Layer 7 Load Balancing & Reverse Proxy
-- **Upstream Pool Configuration:** Distribute traffic evenly across multiple instances of backend services using **Round Robin** and **Least Connections**.
-- **Active & Passive Health Checks:** Automatically remove dead or crashing backend instances so users never experience 502/504 Bad Gateway errors.
-- **Path-Based Routing:** Route traffic based on URL prefixes:
-  - `/api/v1/catalog` $\to$ Catalog Service Cluster
-  - `/api/v1/orders` $\to$ Order Service Cluster
-  - `/static/` $\to$ Direct Nginx kernel-level file serving (`sendfile`)
+### Module 1: Transactional Booking Engine & Concurrency Control
+- **Database Schema:** Relational models for `rooms` (inventory count, availability status) and `bookings` (user ID, room ID, timestamp, status).
+- **Concurrency Protection:** Implements PostgreSQL **Row-Level Locking (`SELECT ... FOR UPDATE`)** inside database transactions. When 100 concurrent requests compete for the last available room, exactly 1 succeeds and 99 receive clean conflict responses (`409 Conflict`), eliminating overbooking anomalies.
 
-### 2. Edge Security & Traffic Regulation
-- **Rate Limiting:** Protect backends against traffic surges and denial-of-service attempts using Nginx's leaky bucket rate-limiting zones (`limit_req_zone`).
-- **Header Injection & Observability:**
-  - Inject `X-Request-Id` for distributed end-to-end tracing.
-  - Forward real client IP addresses using `X-Forwarded-For` and `X-Real-IP`.
+### Module 2: Network Idempotency & Duplicate Request Prevention
+- **Idempotency Keys:** Enforces unique `Idempotency-Key` headers on `POST /bookings`.
+- **Atomic Locking:** Uses Redis `SET key value NX EX 60` to store request status (`IN_PROGRESS`, `COMPLETED`). If a mobile client retries after a network timeout, the system returns the cached booking confirmation rather than double-charging or double-booking.
 
-### 3. High-Speed Distributed Caching (Redis)
-- Implement cache-aside architecture: Backend checks Redis before querying the database.
-- Cache popular catalog queries with a strict TTL (Time to Live) to shield downstream resources.
+### Module 3: High-Speed Cache-Aside Engine (Redis)
+- **Search Acceleration:** Implements cache-aside caching on `GET /rooms`. Uncached queries read from PostgreSQL and populate Redis with a 60-second TTL. Subsequent reads return from Redis in < 1ms, shielding PostgreSQL from read saturation during search spikes.
 
-### 4. Containerized Multi-Service Orchestration (Docker Compose)
-- Define the entire networking environment in a single `docker-compose.yml`.
-- Set up private network bridging so backend containers are inaccessible from the open internet, leaving Nginx as the single secure entry point.
+### Module 4: Nginx Edge Reverse Proxy & Connection Pooling
+- **Upstream Connection Pooling:** Configures `keepalive 32;` with `proxy_http_version 1.1;` and cleared `Connection` headers to maintain persistent TCP sockets between Nginx and backend instances, eliminating repeated TCP 3-way handshake overhead.
+- **Header Normalization:** Injects `X-Request-Id` for end-to-end distributed tracing and forwards client addresses via `X-Forwarded-For`.
 
----
+### Module 5: TLS 1.3 Termination & HTTP/2 Multiplexing
+- **TLS Offloading:** Terminates HTTPS on port 443 using an OpenSSL self-signed certificate, offloading asymmetric cryptographic overhead from backend runtimes.
+- **Protocol Enforcement:** Redirects HTTP port 80 to HTTPS port 443 via `301 Moved Permanently`. Activates HTTP/2 binary stream multiplexing (`listen 443 ssl http2;`).
 
-## 5. Practical Engineering Outcomes
+### Module 6: Traffic Regulation & Rate Limiting
+- **Abuse Prevention:** Configures Nginx leaky bucket rate-limiting zones (`limit_req_zone $binary_remote_addr zone=api_limit:10m rate=10r/s;`).
+- Bursts exceeding thresholds receive `HTTP 429 Too Many Requests` with appropriate retry guidance.
 
-1. **Event-Driven Concurrency:** Understanding why Nginx uses an asynchronous event loop (`epoll`) instead of thread-per-connection architectures.
-2. **Dynamic Failover:** Configuring upstream blocks in `nginx.conf` and handling node failovers without downtime.
-3. **Distributed Caching Strategies:** Integrating Redis to cut database read latency and mitigate cache stampedes.
-4. **Container Network Isolation:** Managing Docker bridge networks, container DNS discovery, and port mappings.
-
----
-
-## 6. Verification & Benchmarking
-
-- **Functional Testing:** Verify load balancing by observing consecutive requests alternating across backend nodes.
-- **Failover Simulation:** Stop one backend container (`docker stop catalog-node-2`) and verify that Nginx seamlessly diverts 100% of traffic to healthy nodes without user-facing errors.
-- **Load Benchmark:** Use Apache Bench (`ab`) to simulate 10,000 requests across 100 concurrent connections:
-  ```powershell
-  ab -n 10000 -c 100 http://localhost/api/v1/catalog
+### Module 7: Weighted Canary Traffic Routing (90/10 Split)
+- **Progressive Delivery:** Configures Nginx upstream blocks with weighted traffic distribution:
+  ```nginx
+  upstream booking_canary_cluster {
+      server booking_v1:5001 weight=9;
+      server booking_v2:5002 weight=1 max_fails=2 fail_timeout=10s;
+      keepalive 32;
+  }
   ```
+- Exposes 10% of live traffic to the canary version (`v2`) while routing 90% to the verified baseline (`v1`).
+
+### Module 8: Automated Rollout & Rollback Controller
+- **Automated Health Monitoring:** A lightweight background controller monitors the canary instance (`v2`).
+- **Autonomous Recovery:** If `v2` error rates exceed 5% or p99 latency spikes above 500ms, the controller automatically updates the Nginx upstream weight for `v2` to 0% and executes `nginx -s reload`, restoring 100% traffic to `v1` with zero user-facing downtime.
 
 ---
 
-## 7. Resume & Professional Summary
+## 5. Non-Functional Requirements (NFRs)
 
-> **Production Distributed System Infrastructure (Nginx, Redis, Docker)**  
-> *Architected and deployed a multi-service backend infrastructure utilizing Nginx as a Layer 7 reverse proxy and load balancer with path-based routing, rate limiting, and upstream health monitoring. Integrated Redis for distributed caching and session state management. Orchestrated isolated multi-container networking via Docker Compose. Benchmarked traffic routing under high concurrency achieving sub-5ms proxy overhead.*
+| Metric | Target Specification |
+|---|---|
+| **Data Correctness** | 0% overbooking rate under 100 concurrent requests for a single inventory item |
+| **Idempotency Guarantee** | 100% deduplication of re-submitted booking requests within a 60-second window |
+| **Edge Routing Overhead** | $\le 5\text{ ms}$ proxy latency delta (`$request_time` - `$upstream_response_time`) |
+| **Search Cache Latency** | $\le 2\text{ ms}$ response time for Redis cache hits |
+| **Rollback Time** | $\le 10\text{ seconds}$ from anomaly detection to traffic re-route |
+
+---
+
+## 6. SDE-2 Interview & Resume Presentation
+
+> **High-Availability Distributed Booking Platform (PostgreSQL, Redis, Nginx, Docker)**  
+> *Architected a transactional reservation platform solving high-concurrency booking collisions via PostgreSQL row-level locks (`SELECT FOR UPDATE`) and Redis idempotency keys, eliminating overbooking anomalies under stress tests of 100 simultaneous requests. Designed an edge traffic layer using Nginx featuring TLS 1.3 termination, HTTP/2 multiplexing, upstream keepalive connection pooling, and Redis cache-aside acceleration. Engineered a weighted canary deployment pipeline (90/10 split) with an automated health controller that triggers instant traffic rollbacks upon detecting latency regressions.*
