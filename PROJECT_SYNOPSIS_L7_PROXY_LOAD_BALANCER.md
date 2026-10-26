@@ -15,7 +15,7 @@ In modern enterprise architectures (e.g., Swiggy, Zomato, BookMyShow, Amazon), b
 1. **Application & Data Integrity:** Ensuring that concurrent operations (such as multiple users attempting to reserve the last inventory item) execute without double-booking anomalies or race conditions.
 2. **Resilient Edge Traffic Management:** Ensuring that traffic enters through an optimized, secure gateway (Nginx) that terminates TLS, reuses upstream TCP connections, handles rate limiting, and supports progressive canary releases with automated rollback.
 
-This project unifies both domains into an end-to-end, production-grade distributed architecture. It pairs an open-source, transactional **Booking/Reservation Service** backed by **PostgreSQL** with an **Nginx Layer 7 Edge Reverse Proxy**, **Redis Distributed Caching**, and a **Canary Rollout Controller**.
+Rather than building a basic CRUD application from scratch, this project integrates an **open-source, production-ready transactional Booking/Reservation Service** (Python / FastAPI backed by PostgreSQL, e.g., `fastapi-booking`), and focuses engineering effort on designing and deploying the **production-grade networking, traffic management, and resilience layer** around it: an **Nginx Layer 7 Edge Reverse Proxy**, **Redis Distributed Caching & Idempotency**, and an **Autonomous Canary Rollout Controller**.
 
 ---
 
@@ -58,9 +58,9 @@ flowchart TD
 
 ## 4. Core Functional Modules
 
-### Module 1: Transactional Booking Engine & Concurrency Control
-- **Database Schema:** Relational models for `rooms` (inventory count, availability status) and `bookings` (user ID, room ID, timestamp, status).
-- **Concurrency Protection:** Implements PostgreSQL **Row-Level Locking (`SELECT ... FOR UPDATE`)** inside database transactions. When 100 concurrent requests compete for the last available room, exactly 1 succeeds and 99 receive clean conflict responses (`409 Conflict`), eliminating overbooking anomalies.
+### Module 1: Upstream Workload — Open-Source Transactional Booking API & Database
+- **Pre-Built Upstream API:** Leverages an open-source Python/FastAPI transactional booking microservice with PostgreSQL, providing pre-existing REST endpoints for inventory search (`GET /api/v1/rooms`) and reservation execution (`POST /api/v1/bookings`).
+- **Concurrency Protection & Data Integrity:** Evaluates and hardens PostgreSQL **Row-Level Locking (`SELECT ... FOR UPDATE`)** inside database transactions. When 100 concurrent requests compete for the last available room, exactly 1 succeeds and 99 receive clean conflict responses (`409 Conflict`), eliminating overbooking anomalies under high network concurrency.
 
 ### Module 2: Network Idempotency & Duplicate Request Prevention
 - **Idempotency Keys:** Enforces unique `Idempotency-Key` headers on `POST /bookings`.
